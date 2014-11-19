@@ -119,6 +119,28 @@ to specify it in the connection string::
 
     mysql+pymysql://scott:tiger@localhost/foo?charset=utf8
 
+Also, you can use DSN files to store your connection information.  The valid
+options in a section are those accepted by ``sqlalchemy.engine.url.URL(...)``,
+that is drivername, username, password, host, port, database, query (all except
+drivername default to None).
+
+Here is an example entry in a DSN file::
+
+    [DB_CONFIG_1]
+    drivername=postgres
+    host=my.remote.host
+    port=5433
+    database=mydatabase
+    username=myuser
+    password=1234
+
+The configuration can then be loaded with something like this (the dsn_filename default value is odbc.ini, in the current directory)::
+
+    %load_ext sql
+    %config SqlMagic.dsn_filename='../dbconfig.ini'
+    %sql [DB_CONFIG_1] select * from work
+
+
 Configuration
 -------------
 
@@ -144,6 +166,11 @@ only the screen display is truncated.
         Current: 0
         Automatically limit the number of rows displayed (full result set is still
         stored)
+    SqlMagic.dsn_filename=<Unicode>
+       Current: u'odbc.ini'
+       Path to DSN file. When the first argument is of the form [section], a
+       sqlalchemy connection string is formed from the matching section in the DSN
+       file.
     SqlMagic.feedback=<Bool>
         Current: True
         Print number of rows affected by DML
